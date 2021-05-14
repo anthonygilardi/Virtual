@@ -12,10 +12,10 @@
     "credits": [
         {
             "title": "Virtual Device NodeServer",
-            "author": "Mark Vittes (markv58)",
+            "author": "Mark Vittes (markv58) and Anthony Gilardi",
             "version": "1.2.3",
-            "date": "July 4, 2020",
-            "source": "https://github.com/markv58/Virtual.git",
+            "date": "May 13, 2021",
+            "source": "https://github.com/anthonygilardi/Virtual.git",
             "license": "https://raw.githubusercontent.com/markv58/Virtual/master/LICENSE"
         }
     ]
