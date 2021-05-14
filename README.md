@@ -1,7 +1,7 @@
 # Virtual Device Nodeserver
 ### A nodeserver for Universal Devices Isy
 
-With this nodeserver you can create virtual switches or temperature devices to be used in various applications.
+With this nodeserver you can create virtual Locks, switches, or temperature devices to be used in various applications.
 
 Devices store their status in a .db for retrieval on a restart. You can add a virtual switch to a scene and that switch can be polled to determine if the scene is on or off.
 
@@ -18,6 +18,8 @@ Data can be Pushed to another variable.
 
 
 ### Updates
+
+2020/5/13 Forked and added Locks.
 
 1.2.3 Bug fix.
 
