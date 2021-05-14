@@ -4,6 +4,7 @@
 """
 This is a NodeServer created for Polyglot v2 from a template by Einstein.42 (James Miline)
 This NodeServer was created by markv58 (Mark Vittes) markv58git@gmail.com
+This NodeServer was modified to add locks by Anthony Gilardi gilardi@gmail.com
 v1.2.3
 """
 
@@ -98,6 +99,9 @@ class Controller(polyinterface.Controller):
             elif a == "pullDelay":
                 self.pullDelay = float(val)
             elif a.isdigit():
+                if val == 'lock':
+                    _name = str(val) + ' ' + str(key)
+                    self.addNode(VirtualLock(self, self.address, key, _name))
                 if val == 'switch':
                     _name = str(val) + ' ' + str(key)
                     self.addNode(VirtualSwitch(self, self.address, key, _name))
@@ -146,7 +150,116 @@ class Controller(polyinterface.Controller):
         'REMOVE_NOTICE_TEST': remove_notice_test
     }
     drivers = [{'driver': 'ST', 'value': 1, 'uom': 2}]
+            
 
+class VirtualLock(polyinterface.Node):         ####################################    LOCK      ####################################
+    def __init__(self, controller, primary, address, name):
+        super(VirtualLock, self).__init__(controller, primary, address, name)
+        self.switchStatus = 0
+
+    def start(self):
+        self.createDBfile()
+
+    def createDBfile(self):
+        _name = str(self.name)
+        _name = _name.replace(" ","_")
+        _key = 'key' + str(self.address)
+        _check = _name + '.db'
+        LOGGER.debug('Checking to see if %s exists', _check)
+        if os.path.exists(_check):
+            LOGGER.debug('The file does exists')
+            self.retrieveValues()
+            pass
+        else:
+            s = shelve.open(_name, writeback=True)
+            s[_key] = { 'switchStatus': self.switchStatus }
+            time.sleep(2)
+            s.close()
+
+    def deleteDB(self, command):
+        _name = str(self.name)
+        _name = _name.replace(" ","_")
+        _key = 'key' + str(self.address)
+        _check = _name + '.db'
+        if os.path.exists(_check):
+            LOGGER.debug('Deleting db')
+            subprocess.run(["rm", _check])
+        time.sleep(1)
+        self.firstPass = True
+        self.start()
+
+    def storeValues(self):
+        _name = str(self.name)
+        _name = _name.replace(" ","_")
+        _key = 'key' + str(self.address)
+        s = shelve.open(_name, writeback=True)
+        try:
+            s[_key] = { 'switchStatus': self.switchStatus}
+        finally:
+            s.close()
+        LOGGER.info('Storing Values')
+        self.listValues()
+            
+    def listValues(self):
+        _name = str(self.name)
+        _name = _name.replace(" ","_")
+        _key = 'key' + str(self.address)
+        s = shelve.open(_name, writeback=True)
+        try:
+            existing = s[_key]
+        finally:
+            s.close()
+        LOGGER.info(existing)
+
+    def retrieveValues(self):
+        _name = str(self.name)
+        _name = _name.replace(" ","_")
+        _key = 'key' + str(self.address)
+        s = shelve.open(_name, writeback=True)
+        try:
+            existing = s[_key]
+        finally:
+            s.close()
+        LOGGER.info('Retrieving Values %s', existing)
+        self.switchStatus = existing['switchStatus']
+        self.setDriver('ST', self.switchStatus)
+
+    def setOn(self, command):
+#        self.setDriver('ST', 1)
+        self.setDriver('SECMD', 1)
+        self.switchStatus = 1
+        self.storeValues()
+
+    def setOff(self, command):
+#        self.setDriver('ST', 0)
+        self.setDriver('SECMD', 0)
+        self.switchStatus = 0
+        self.storeValues()
+
+    def update(self):
+        pass
+
+    def getDataFromID(self):
+        pass
+
+    def query(self):
+        self.reportDrivers()
+
+    #"Hints See: https://github.com/UniversalDevicesInc/hints"
+    hint = '0x0107000'
+    #drivers = [{'driver': 'ST', 'value': 0, 'uom': 25}]
+    drivers = [{'driver': 'ST', 'value': 0, 'uom': 25}]
+
+    id = 'virtuallock'
+
+#    commands = {
+#                    'DON': setOn, 'DOF': setOff
+#                }
+    commands = {
+                    '0': setOn, '1': setOff
+                }
+
+            
 class VirtualSwitch(polyinterface.Node):         ####################################    SWITCH      ####################################
     def __init__(self, controller, primary, address, name):
         super(VirtualSwitch, self).__init__(controller, primary, address, name)
