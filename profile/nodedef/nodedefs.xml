@@ -23,7 +23,7 @@
     <nodeDef id="virtuallock" nls="vlock">
         <editors />
         <sts>
-            <st id="ST" editor="on_off" />
+            <st id="ST" editor="unlock_lock" />
         </sts>
         <cmds>
             <sends />
