@@ -248,7 +248,7 @@ class VirtualLock(polyinterface.Node):         #################################
     #"Hints See: https://github.com/UniversalDevicesInc/hints"
     hint = '0x0107000'
     #drivers = [{'driver': 'ST', 'value': 0, 'uom': 25}]
-    drivers = [{'driver': 'ST', 'value': 0, 'uom': 25}]
+    drivers = [{'driver': 'ST', 'value': 0, 'uom': 84}]
 
     id = 'virtuallock'
 
