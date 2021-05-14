@@ -19,6 +19,20 @@
             </accepts>
         </cmds>
     </nodeDef>
+        <!-- virtuallockid -->
+    <nodeDef id="virtuallock" nls="vlock">
+        <editors />
+        <sts>
+            <st id="ST" editor="on_off" />
+        </sts>
+        <cmds>
+            <sends />
+            <accepts>
+                <cmd id="0" />
+                <cmd id="1" />
+            </accepts>
+        </cmds>
+    </nodeDef>
         <!-- virtualswitchid -->
     <nodeDef id="virtualswitch" nls="vswitch">
         <editors />
